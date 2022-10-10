@@ -1,5 +1,6 @@
 import bpy
 from bpy import context
+from convex_hull import convex_hull
 
 import sys
 import os
@@ -20,6 +21,11 @@ if exists(filename + ".fbx"):
 else:
     sys.exit("FBX file named " + fileArgument + " was not found.\r\n")
 
+try:
+    os.mkdir(filename)
+except OSError as error:
+    print(error)
+
 bpy.ops.wm.save_as_mainfile(filepath=filename + ".blend")
 
 # Delete all default objects
@@ -28,6 +34,7 @@ bpy.ops.object.delete()
 bpy.ops.wm.save_mainfile()
 
 # Import fbx object.
+print("Importing FBX object.")
 bpy.ops.import_scene.fbx(filepath = str(filename + ".fbx"))
 bpy.ops.wm.save_mainfile()
 
@@ -46,6 +53,9 @@ def ApplyMaterial(material_name, obj):
 def matcher(x):
     return '.' not in x.name
 
+bpy.ops.wm.save_mainfile()
+
+print("Separating unique materials...")
 uniqueMaterials = filter(matcher, bpy.data.materials)
 for material in uniqueMaterials:
     bpy.ops.object.select_all(action='DESELECT')
@@ -57,8 +67,12 @@ for material in uniqueMaterials:
     for object in bpy.data.objects:
         # Select only mesh objects
         if object.type == "MESH":
+            bpy.context.view_layer.objects.active = object
+
             # Gets the first material for that object
-            objectMaterial = object.data.materials[0]
+            objectMaterial = None
+            if 0 < len(object.data.materials):
+                objectMaterial = object.data.materials[0]
 
             # if the object's material starts with the name of the current unique material
             # apply the unique material to that object.
@@ -66,5 +80,27 @@ for material in uniqueMaterials:
                 bpy.context.view_layer.objects.active = object
                 col.objects.link(object)
                 ApplyMaterial(mat_name, object)
+
+
+m_col = bpy.data.collections.get("Collection")
+bpy.context.scene.collection.children.unlink(m_col)
+print("Unique materials separated.")
+
+    # ctx = bpy.context.copy()
+    # ctx['selected_objects'] = col.objects
+    # col_filename = filename + "/" + mat_name + ".blend"
+    # bpy.data.libraries.write(col_filename, set(ctx['selected_objects']), fake_user=True)
+
+    # hull_col = bpy.data.collections.new(mat_name + "_hulls")
+    # bpy.context.scene.collection.children.link(hull_col)
+    # for object in  col.objects:
+    #     if object.type == "MESH":
+    #         print("Creating hull: " + object.name + "_hull")
+    #         hull = convex_hull(object.name + "_hull", object)
+    #         if hull is not None:
+    #             hull_col.objects.link(hull)
+    #
+    #         print("Completed hull: " + object.name + "_hull")
+    #         bpy.ops.wm.save_mainfile()
 
 bpy.ops.wm.save_mainfile()
