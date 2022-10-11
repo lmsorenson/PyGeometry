@@ -206,63 +206,54 @@ def add_new_point(hull, center, new_point):
     return point_added
 
 
-def create_base_hull(hull_name, center, vertices):
-    mesh_name = hull_name + "_mesh"
-    print(len(vertices))
+def convex_hull(hull_name, object):
+    # Create the simple starting mesh with 4 points.
+    hull_center, hc, hx, hy, hz = bary_center(object.data.vertices)
+    bpy.context.scene.cursor.location = hull_center
 
-    bm = bmesh.new()
-    mesh = bpy.data.meshes.new(mesh_name)
+    vertices = []
+    for vert in object.data.vertices:
+        vertices.append(vert.co - hull_center)
 
-    # Start with the first 3 points.
-    v1 = bm.verts.new(vertices[0])
-    v2 = bm.verts.new(vertices[1])
-    v3 = bm.verts.new(vertices[2])
-    print(v1.co)
-    print(v2.co)
-    print(v3.co)
-    print(len(bm.verts))
+    hull = create_base_hull(hull_name, hull_center, vertices)
 
-    # create a face for those three points.
-    face = bm.faces.new((v1, v2, v3))
-
-    # Find the formula to tell if a point lies on
-    # the plane created by the first three points in the list of vectors.
-    is_coplanar = find_plane_equation(v1.co, v2.co, v3.co)
-
-    # Find the first point of the remaining points that is not coplanar
-    # with respect to the previous 3.
-    for idx, x in enumerate(vertices):
-        print(x)
-        if idx == 0 or idx == 1 or idx == 2:
-            continue
-
-        if not round(is_coplanar(x), 3) == 0:
-            print("is not coplanar")
-            print(idx)
-            r = bm.verts.new(x)
-            for edge in face.edges:
-                p = edge.verts[0]
-                q = edge.verts[1]
-                bm.faces.new((p, q, r))
-            ## If the point is finished do not continue looping through
-            break
-    print(len(bm.verts))
-    print("removing doubles")
-    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.00001)
-
-    # if the mesh is a perfect plane, we may not find a non-coplanar vertex.
-    if (len(bm.verts) == 4):
-        bm.to_mesh(mesh)
-        if mesh_name in bpy.data.objects:
-            to_delete = bpy.data.objects[mesh_name]
-            bpy.data.objects.remove(to_delete, do_unlink=True)
-        hull_object = bpy.data.objects.new(hull_name, mesh)
-
-        print("Hull created.")
-        return hull_object
-
+    if object.data.is_editmode:
+        bm = bmesh.from_edit_mesh(object.data)
     else:
-        print("All vertices are coplanar.")
+        bm = bmesh.new()
+        bm.from_mesh(object.data)
+
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.01)
+
+    existing_hull_center, ehcc, ehcx, ehcy, ehcz = bary_center(hull.data.vertices)
+
+    processed = 0
+    for vert in bm.verts:
+        if (vert.is_valid):
+            print("Processed ", processed, " verts out of ", len(bm.verts))
+            point_added = add_new_point(hull, hull_center, vert.co - hull_center)
+            if point_added:
+                existing_hull_center, ehcc, ehcx, ehcy, ehcz = bary_center_add(ehcx, ehcy, ehcz, ehcc, vert)
+            processed += 1
 
     bm.free()
-    return None
+
+    # tranform the bmesh by the hull center.
+    if object.data.is_editmode:
+        hull_bm = bmesh.from_edit_mesh(hull.data)
+    else:
+        hull_bm = bmesh.new()
+        hull_bm.from_mesh(hull.data)
+
+    for vert in hull_bm.verts:
+        vert.co += hull_center
+
+    if hull_bm.is_wrapped:
+        bmesh.update_edit_mesh(hull.data)
+    else:
+        hull_bm.to_mesh(hull.data)
+        hull.data.update()
+
+    hull_bm.free()
+
+    return hull;
