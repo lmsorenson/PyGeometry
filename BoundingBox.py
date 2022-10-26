@@ -296,7 +296,7 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
     b = False
     for th in possible_theta:
         bm_box = bmesh.new()
-        box_mesh = bpy.data.meshes.new("box_mesh")
+        box_mesh = bpy.data.meshes.new(name + "_box_mesh")
         # Calculate Fi
         fdot = e2v.dot(Vector([0, 1, 0]))
 
