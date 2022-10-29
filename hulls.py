@@ -23,10 +23,11 @@ for collection in [ bpy.data.collections[6] ]:
            new_hulls.append(hull)
            bpy.ops.wm.save_mainfile()
 
+   new_collection = bpy.data.collections.new(collection.name + "_hulls")
    for h in new_hulls:
        print(h.name, ": ", h.type)
        if h.type == "MESH":
-           collection.objects.link(h)
+           new_collection.objects.link(h)
            bpy.ops.wm.save_mainfile()
 
    print(collection.name)
