@@ -1,6 +1,5 @@
 import bpy
 from bpy import context
-from convex_hull import convex_hull
 
 import sys
 import os

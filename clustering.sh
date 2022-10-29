@@ -5,7 +5,7 @@ echo "Loading scene"
 path=$(dirname "$0")
 echo $path
 
-/Applications/Blender.app/Contents/MacOS/Blender \
+Blender \
 --background \
 --python "$path"/clustering.py \
 --python-use-system-env \

@@ -54,12 +54,7 @@ def point_lies_in_plane(p, q, r, x):
     c = a1 * b2 - b1 * a2
     d = (- a * p.x - b * p.y - c * p.z)
 
-    if (a * x.x + b * x.y + c * x.z + d == 0):
-        print("Coplanar")
-        return True
-    else:
-        print("Not Coplanar")
-        return False
+    return a * x.x + b * x.y + c * x.z + d
 
 
 def create_base_hull(hull_name, center, vertices):
@@ -160,7 +155,7 @@ def add_new_point(hull, center, new_point):
                 f_result = point_lies_in_plane(p, r, q, new_point)
                 face_normal *= -1
 
-            # print(f'Is Coplanar: {f_result}.')
+            #print(f'Is Coplanar: {f_result}.')
             if f_result > 0:
                 conflict_graph.append(face)
 
@@ -168,7 +163,7 @@ def add_new_point(hull, center, new_point):
         #        mat = ob.matrix_world
         #        me = ob.data
 
-        # print(f'Conflict: {len(conflict_graph)}.')
+        #print(f'Conflict: {len(conflict_graph)}.')
 
         boundary = {}
         for face in conflict_graph:
@@ -195,7 +190,7 @@ def add_new_point(hull, center, new_point):
         bmesh.ops.delete(bm, geom=conflict_graph, context='FACES')
         bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.001)
 
-        print("finished adding point")
+        #print("finished adding point")
         if bm.is_wrapped:
             bmesh.update_edit_mesh(hull.data)
         else:
@@ -215,7 +210,7 @@ def convex_hull(hull_name, object):
     for vert in object.data.vertices:
         vertices.append(vert.co - hull_center)
 
-    hull = create_base_hull(hull_name, hull_center, vertices)
+    hull = create_base_hull(hull_name + "_hull", hull_center, vertices)
 
     if object.data.is_editmode:
         bm = bmesh.from_edit_mesh(object.data)
@@ -230,9 +225,10 @@ def convex_hull(hull_name, object):
     processed = 0
     for vert in bm.verts:
         if (vert.is_valid):
-            print("Processed ", processed, " verts out of ", len(bm.verts))
+            #print("Processed ", processed, " verts out of ", len(bm.verts))
             point_added = add_new_point(hull, hull_center, vert.co - hull_center)
             if point_added:
+                #print("point added")
                 existing_hull_center, ehcc, ehcx, ehcy, ehcz = bary_center_add(ehcx, ehcy, ehcz, ehcc, vert)
             processed += 1
 

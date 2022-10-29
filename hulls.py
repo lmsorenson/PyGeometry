@@ -16,15 +16,19 @@ bpy.ops.wm.save_as_mainfile(filepath=filename + "_hulls" + ".blend")
 for collection in [ bpy.data.collections[6] ]:
    print(collection.name)
    new_hulls = []
-   for obj in collection.all_objects:
+   for i, obj in enumerate(collection.all_objects):
+       print("\r\n\r\n\r\n\r\n", collection.name, " ", i, " of " , len(collection.all_objects), "\r\n\r\n\r\n\r\n")
        if obj.type == "MESH":
            hull = convex_hull(obj.name, obj)
            new_hulls.append(hull)
            bpy.ops.wm.save_mainfile()
 
-   for hull in new_hulls:
-       if hull.type == "MESH":
-           collection.objects.link(hull)
+   for h in new_hulls:
+       print(h.name, ": ", h.type)
+       if h.type == "MESH":
+           collection.objects.link(h)
            bpy.ops.wm.save_mainfile()
+
+   print(collection.name)
 
 bpy.ops.wm.save_mainfile()
