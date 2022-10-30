@@ -2,7 +2,7 @@ import bpy
 import sys
 from os.path import splitext
 
-from BoundingBox import minimal_bounding_box
+from bounding_box import minimal_bounding_box
 
 
 fileArgument = sys.argv[-1]

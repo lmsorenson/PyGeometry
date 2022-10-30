@@ -29,6 +29,7 @@ for collection in [ bpy.data.collections[6] ]:
        if h.type == "MESH":
            new_collection.objects.link(h)
            bpy.ops.wm.save_mainfile()
+   bpy.context.scene.collection.children.link(new_collection)
 
    print(collection.name)
 
