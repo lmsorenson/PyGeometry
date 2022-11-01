@@ -403,7 +403,9 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
             to_delete = bpy.data.objects[minima_name]
             bpy.data.objects.remove(to_delete, do_unlink=True)
         box_object = bpy.data.objects.new(minima_name, box_mesh)
-        new_collection = bpy.data.collections.get('Collection')
+        new_collection = bpy.data.collections.get('MinimaCollection')
+        if new_collection == None:
+            new_collection = bpy.data.collections.get('MinimaCollection')
         new_collection.objects.link(box_object)
 
     bm.to_mesh(illustration_mesh)
@@ -414,7 +416,9 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
         to_delete = bpy.data.objects[illustration_object_name]
         bpy.data.objects.remove(to_delete, do_unlink=True)
     illustration_object = bpy.data.objects.new(illustration_object_name, illustration_mesh)
-    new_collection = bpy.data.collections.get('Collection')
+    new_collection = bpy.data.collections.get('IllustrationCollection')
+    if new_collection == None:
+        new_collection = bpy.data.collections.new('IllustrationCollection')
     new_collection.objects.link(illustration_object)
 
     if (b == True):
