@@ -22,9 +22,11 @@ for collection in [ bpy.data.collections[6] ]:
            new_hulls.append(hull)
            bpy.ops.wm.save_mainfile()
 
+   new_collection = bpy.data.collections.new(collection.name + "_boxes")
    for hull in new_hulls:
        if hull.type == "MESH":
            collection.objects.link(hull)
            bpy.ops.wm.save_mainfile()
+   bpy.context.scene.collection.children.link(new_collection)
 
 bpy.ops.wm.save_mainfile()
