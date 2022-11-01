@@ -1,6 +1,7 @@
 import bpy
 import bmesh
 import math
+from mathutils import Vector
 from convex_hull import bary_center
 from convex_hull import compute_normal
 
