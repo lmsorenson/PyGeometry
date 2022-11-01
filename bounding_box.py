@@ -74,7 +74,9 @@ def gaussian_sphere(name, polyhedron):
         bm.free()
 
         sphere_object = bpy.data.objects.new(name, sphere_mesh)
-        new_collection = bpy.data.collections.get('Collection')
+        new_collection = bpy.data.collections.get('SphereCollection')
+        if new_collection == None:
+            new_collection = bpy.data.collections.new('SphereCollection')
         new_collection.objects.link(sphere_object)
         return sphere_object
 
