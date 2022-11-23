@@ -56,6 +56,28 @@ def point_lies_in_plane(p, q, r, x):
 
     return a * x.x + b * x.y + c * x.z + d
 
+def point_lies_in_triangle(p, a, b, c):
+    ab = b - a
+    ac = c - a
+    area = ab.cross(ac) / 2
+
+    pa = p - a
+    pb = p - b
+    pc = p - c
+
+    alpha = pb.cross(pc) / (2 * area)
+    beta = pc.cross(pa) / (2 * area)
+    gamma = (1 - alpha - beta)
+
+    if alpha < 0 or alpha > 1:
+        return False
+    if beta < 0 or beta > 1:
+        return False
+    if gamma < 0 or gamma > 1:
+        return False
+
+    return (alpha + beta + gamma) == 1
+
 
 def create_base_hull(hull_name, center, vertices):
     mesh_name = hull_name + "_mesh"
@@ -156,7 +178,7 @@ def add_new_point(hull, center, new_point):
                 face_normal *= -1
 
             #print(f'Is Coplanar: {f_result}.')
-            if f_result > 0:
+            if f_result >= 0:
                 conflict_graph.append(face)
 
         #        ob = bpy.context.object

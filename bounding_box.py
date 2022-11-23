@@ -260,7 +260,7 @@ def ex(v, n, ex):
 def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
     tv = e1.verts[0].co
 
-    # translate eges to the origin.
+    # translate edges to the origin.
     e1v = e1.verts[1].co - tv
     e1v.normalize()
     e2v = e2.verts[1].co - e2.verts[0].co
@@ -279,17 +279,9 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
     e1v.rotate(q2)
     e2v.rotate(q2)
 
+    # Rotate the gaussian sphere to fit the illustration
     rotate(sph, q1)
     rotate(sph, q2)
-
-    bm = bmesh.new()
-    illustration_mesh = bpy.data.meshes.new(name + "_illustration_mesh")
-    o = bm.verts.new(Vector())
-
-    e1bv = bm.verts.new(e1v)
-    e2bv = bm.verts.new(e2v)
-    bE1 = bm.edges.new((o, e1bv))
-    bE2 = bm.edges.new((o, e2bv))
 
     # Find values for theta
     possible_theta = find_possible_theta_values(origin, sph, e2v)
@@ -298,8 +290,6 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
 
     b = False
     for th in possible_theta:
-        bm_box = bmesh.new()
-        box_mesh = bpy.data.meshes.new(name + "_box_mesh")
         # Calculate Fi
         fdot = e2v.dot(Vector([0, 1, 0]))
 
@@ -363,6 +353,8 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
         disp = disp_1 + disp_2 + disp_3
         disp2 = disp_1_pos + disp_2_pos + disp_3_pos
 
+        bm_box = bmesh.new()
+        box_mesh = bpy.data.meshes.new(name + "_box_mesh")
         v0 = bm_box.verts.new(Vector() + disp)
         v7 = bm_box.verts.new(Vector() + disp2)
 
@@ -407,19 +399,6 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
         if new_collection == None:
             new_collection = bpy.data.collections.get('MinimaCollection')
         new_collection.objects.link(box_object)
-
-    bm.to_mesh(illustration_mesh)
-    bm.free()
-
-    illustration_object_name = name + "_illustration";
-    if illustration_object_name in bpy.data.objects:
-        to_delete = bpy.data.objects[illustration_object_name]
-        bpy.data.objects.remove(to_delete, do_unlink=True)
-    illustration_object = bpy.data.objects.new(illustration_object_name, illustration_mesh)
-    new_collection = bpy.data.collections.get('IllustrationCollection')
-    if new_collection == None:
-        new_collection = bpy.data.collections.new('IllustrationCollection')
-    new_collection.objects.link(illustration_object)
 
     if (b == True):
         print("d true")
