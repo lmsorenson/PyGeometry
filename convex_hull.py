@@ -173,12 +173,13 @@ def add_new_point(hull, center, new_point):
             if normal_faces_out:
                 # is_coplanar = find_plane_equation(p, q, r)
                 f_result = point_lies_in_plane(p, q, r, new_point)
+                point_in_triangle = is_point_inside_triangle(p, q, r, new_point);
             else:
                 # is_coplanar = find_plane_equation(p, r, q)
                 f_result = point_lies_in_plane(p, r, q, new_point)
                 face_normal *= -1
+                point_in_triangle = is_point_inside_triangle(p, r, q, new_point);
 
-            point_in_triangle = is_point_inside_triangle(p, r, q, new_point);
 
             #print(f'Is Coplanar: {f_result}.')
             # f_result of greater than to zero implies a visible face.
