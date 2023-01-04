@@ -7,7 +7,13 @@ def mu(c, c1, c2):
     e2 = c2 - c
 
     m = e1 - (e1.dot(e2) * e2 / e2.dot(e2))
-    return m / m.dot(e1)
+    d = m.dot(e1)
+
+    if d == 0:
+        return 0
+
+    else:
+        return m / d
 
 def in_bounds(c): return 1 >= c >= 0;
 
