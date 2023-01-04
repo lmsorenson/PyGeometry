@@ -10,7 +10,7 @@ def mu(c, c1, c2):
     d = m.dot(e1)
 
     if d == 0:
-        return 0
+        return None
 
     else:
         return m / d
@@ -21,6 +21,9 @@ def bary_centric_coordinates(a, b, c, u):
     mu_a = mu(c, a, b)
     mu_b = mu(a, b, c)
     mu_g = mu(b, c, a)
+
+    if (mu_a == None or mu_b == None or mu_g == None):
+        return -1, -1, -1
 
     alpha = (u - c).dot(mu_a)
     beta = (u - a).dot(mu_b)
