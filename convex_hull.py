@@ -3,6 +3,7 @@ import bmesh
 import math
 import pprint
 from mathutils import Vector
+from bary_centric_coordinates import is_point_inside_triangle
 
 
 def bary_center(vertices):
@@ -177,9 +178,16 @@ def add_new_point(hull, center, new_point):
                 f_result = point_lies_in_plane(p, r, q, new_point)
                 face_normal *= -1
 
+            point_in_triangle = is_point_inside_triangle(p, r, q, new_point);
+
             #print(f'Is Coplanar: {f_result}.')
-            if f_result >= 0:
+            # f_result of greater than to zero implies a visible face.
+            if f_result > 0:
                 conflict_graph.append(face)
+
+            elif f_result == 0 and point_in_triangle:
+                conflict_graph.append(face)
+
 
         #        ob = bpy.context.object
         #        mat = ob.matrix_world
