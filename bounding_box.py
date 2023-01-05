@@ -290,7 +290,9 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
 
     b = False
     box_minima = None
+    print("checking theta")
     for th in possible_theta:
+        print(th)
         # Calculate Fi
         fdot = e2v.dot(Vector([0, 1, 0]))
 
