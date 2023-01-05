@@ -186,7 +186,7 @@ def add_new_point(hull, center, new_point):
             if f_result > 0:
                 conflict_graph.append(face)
 
-            elif f_result == 0 and point_in_triangle:
+            elif f_result == 0 and not point_in_triangle:
                 conflict_graph.append(face)
 
 
