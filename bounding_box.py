@@ -394,6 +394,7 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
 
         bm_box.to_mesh(box_mesh)
         minima_name = name + "_minima"
+        print(minima_name)
         if minima_name in bpy.data.objects:
             to_delete = bpy.data.objects[minima_name]
             bpy.data.objects.remove(to_delete, do_unlink=True)
