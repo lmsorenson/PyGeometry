@@ -186,6 +186,8 @@ def add_new_point(hull, center, new_point):
             if f_result > 0:
                 conflict_graph.append(face)
 
+            # if f_result is 0 the point should be coplanar with the face.
+            # if the point is not in the triangle then the face should be deleted.
             elif f_result == 0 and not point_in_triangle:
                 conflict_graph.append(face)
 

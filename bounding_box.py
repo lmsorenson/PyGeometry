@@ -289,6 +289,7 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
     #    pprint.pprint(possible_theta)
 
     b = False
+    box_minima = None
     for th in possible_theta:
         # Calculate Fi
         fdot = e2v.dot(Vector([0, 1, 0]))
@@ -365,6 +366,8 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
         volume = l1 * l2 * l3
         if min_vol == 0 or volume < min_vol:
             min_vol = volume
+
+        # if the volume is not the minimum volume, throw it away.
         else:
             continue
 
@@ -395,14 +398,15 @@ def compute_minima(name, sph, origin, e1, e2, hull_points, min_vol):
             to_delete = bpy.data.objects[minima_name]
             bpy.data.objects.remove(to_delete, do_unlink=True)
         box_object = bpy.data.objects.new(minima_name, box_mesh)
-        new_collection = bpy.data.collections.get('MinimaCollection')
-        if new_collection == None:
-            new_collection = bpy.data.collections.get('MinimaCollection')
-        new_collection.objects.link(box_object)
+        box_minima = box_object
+        # new_collection = bpy.data.collections.get('MinimaCollection')
+        # if new_collection == None:
+        #     new_collection = bpy.data.collections.get('MinimaCollection')
+        # new_collection.objects.link(box_object)
 
     if (b == True):
         print("d true")
-    return b, min_vol
+    return b, box_minima
 
 
 def minimal_bounding_box(polyhedron):
@@ -419,6 +423,7 @@ def minimal_bounding_box(polyhedron):
 
         b = False
         min_vol = 0
+        min_box = None
         for e1 in hull.edges:
             for e2 in hull.edges:
                 if e1.index == e2.index:
@@ -430,12 +435,8 @@ def minimal_bounding_box(polyhedron):
                     bpy.data.objects.remove(to_delete, do_unlink=True)
                 sph = gaussian_sphere(sphere_name, polyhedron)
 
-                b, min = compute_minima(polyhedron.name, sph, origin, e1, e2, hull.verts, min_vol)
+                b, box = compute_minima(polyhedron.name, sph, origin, e1, e2, hull.verts, min_vol)
+                if box is not None:
+                    min_box = box
 
-                if b == True:
-                    print("break")
-            #                    break
-
-            if b == True:
-                print("break")
-#                break
+        return min_box
