@@ -255,7 +255,7 @@ def convex_hull(hull_name, object):
         bmesh.update_edit_mesh(bm.data)
     else:
         bm.to_mesh(object.data)
-        bm.data.update()
+        object.data.update()
 
     ### Finish input cleanup.
 
