@@ -38,6 +38,9 @@ def bary_centric_coordinates(a, b, c, u):
     return alpha, beta, gamma
 
 def is_point_inside_triangle(a, b, c, u):
+    if (b - a).length == 0 or (c - a).length == 0 or (c - b).length == 0:
+        return None
+
     alpha, beta, gamma = bary_centric_coordinates(a, b, c, u)
     if alpha is not None and beta is not None and gamma is not None:
         return in_bounds(alpha) and in_bounds(beta) and in_bounds(gamma)

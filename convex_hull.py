@@ -222,7 +222,8 @@ def add_new_point(hull, center, new_point):
                     verts.append(bm.verts.new(v2))
                     bm.faces.new(verts)
                     point_added = True
-                print("triangle not valid.")
+                else:
+                    print("triangle not valid.")
 
         # Do Clean Up
         bmesh.ops.delete(bm, geom=conflict_graph, context='FACES')
