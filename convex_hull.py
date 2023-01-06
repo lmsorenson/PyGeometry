@@ -211,12 +211,18 @@ def add_new_point(hull, center, new_point):
 
         # Create new faces.
         for index, edge in boundary.items():
+            # if the edge is valid create a new face between the new point and the edge
             if (edge.is_valid):
-                verts = [bm.verts.new(new_point)]
-                for vert in edge.verts:
-                    verts.append(bm.verts.new(vert.co))
-                bm.faces.new(verts)
-                point_added = True
+                v1 = edge.verts[0].co
+                v2 = edge.verts[1].co
+                # must be a real triangle.
+                if (new_point - v1).length is not 0 and (new_point - v2).length is not 0:
+                    verts = [bm.verts.new(new_point)]
+                    verts.append(bm.verts.new(v1))
+                    verts.append(bm.verts.new(v2))
+                    bm.faces.new(verts)
+                    point_added = True
+                print("triangle not valid.")
 
         # Do Clean Up
         bmesh.ops.delete(bm, geom=conflict_graph, context='FACES')
