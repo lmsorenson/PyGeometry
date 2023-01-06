@@ -33,7 +33,7 @@ def intersect(bc, p, q, r, r0, r1):
 
 def gaussian_sphere(name, polyhedron):
     if polyhedron.type == "MESH":
-
+        print("creating sphere with: ")
         hull = bmesh.new()
         hull.from_mesh(polyhedron.data)
 
@@ -46,6 +46,8 @@ def gaussian_sphere(name, polyhedron):
 
         dict = {}
         regions = {}
+        print (len(hull.faces), " faces")
+        print (len(hull.edges), " edges")
         for face in hull.faces:
             verts = []
             bc, bx, by, bz, bcount = bary_center(face.verts)
@@ -53,6 +55,7 @@ def gaussian_sphere(name, polyhedron):
             nc.normalize()
             c = bm.verts.new(nc + origin)
             dict[face.index] = c
+
 
         for edge in hull.edges:
             f1 = edge.link_faces[0]
@@ -67,15 +70,22 @@ def gaussian_sphere(name, polyhedron):
                 else:
                     regions[v.index] = [e]
 
+
+        print ("Sphere has ", len(regions), " regions")
         for i, region in regions.items():
             bmesh.ops.contextual_create(bm, geom=region)
 
         bm.to_mesh(sphere_mesh)
         bm.free()
 
+        if sphere_mesh is not None:
+            print("Sphere Mesh created.")
+        else:
+            print("No Sphere Mesh created.")
+
         sphere_object = bpy.data.objects.new(name, sphere_mesh)
         new_collection = bpy.data.collections.get('SphereCollection')
-        if new_collection == None:
+        if new_collection is None:
             new_collection = bpy.data.collections.new('SphereCollection')
         new_collection.objects.link(sphere_object)
         return sphere_object
