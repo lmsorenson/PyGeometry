@@ -216,7 +216,7 @@ def add_new_point(hull, center, new_point):
                 v1 = edge.verts[0].co
                 v2 = edge.verts[1].co
                 # must be a real triangle.
-                if (new_point - v1).length is not 0 and (new_point - v2).length is not 0:
+                if (new_point - v1).length != 0 and (new_point - v2).length != 0:
                     verts = [bm.verts.new(new_point)]
                     verts.append(bm.verts.new(v1))
                     verts.append(bm.verts.new(v2))
