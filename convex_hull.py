@@ -188,9 +188,8 @@ def add_new_point(hull, center, new_point):
 
             # if f_result is 0 the point should be coplanar with the face.
             # if the point is not in the triangle then the face should be deleted.
-            elif f_result == 0 and not point_in_triangle:
+            elif point_in_triangle is not None and f_result == 0 and not point_in_triangle:
                 conflict_graph.append(face)
-
 
         #        ob = bpy.context.object
         #        mat = ob.matrix_world

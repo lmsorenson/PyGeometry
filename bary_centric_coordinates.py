@@ -10,19 +10,25 @@ def mu(c, c1, c2):
     d = m.dot(e1)
 
     if d == 0:
-        return None
+        raise Exception("d is 0: ", " e1 ", e1, " e2 ", e2, " m ", m)
 
-    else:
-        return m / d
+    return m / d
 
-def in_bounds(c): return 1 >= c >= 0;
+def in_bounds(c):
+    if c is not None: return 1 >= c >= 0;
+    else: return None
 
 def bary_centric_coordinates(a, b, c, u):
-    mu_a = mu(c, a, b)
-    mu_b = mu(a, b, c)
-    mu_g = mu(b, c, a)
+    try:
+        mu_a = mu(c, a, b)
+        mu_b = mu(a, b, c)
+        mu_g = mu(b, c, a)
 
-    if (mu_a == None or mu_b == None or mu_g == None):
+    except Exception as e:
+        print (e)
+        return None, None, None
+
+    if mu_a is None or mu_b is None or mu_g is None:
         return -1, -1, -1
 
     alpha = (u - c).dot(mu_a)
@@ -33,4 +39,7 @@ def bary_centric_coordinates(a, b, c, u):
 
 def is_point_inside_triangle(a, b, c, u):
     alpha, beta, gamma = bary_centric_coordinates(a, b, c, u)
-    return in_bounds(alpha) and in_bounds(beta) and in_bounds(gamma)
+    if alpha is not None and beta is not None and gamma is not None:
+        return in_bounds(alpha) and in_bounds(beta) and in_bounds(gamma)
+    else:
+        return None
