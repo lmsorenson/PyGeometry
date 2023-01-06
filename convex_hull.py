@@ -241,6 +241,24 @@ def add_new_point(hull, center, new_point):
 
 def convex_hull(hull_name, object):
     # Create the simple starting mesh with 4 points.
+
+    ### Cleanup the input.
+    if object.data.is_editmode:
+        bm = bmesh.from_edit_mesh(object.data)
+    else:
+        bm = bmesh.new()
+        bm.from_mesh(object.data)
+
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.01)
+
+    if bm.is_wrapped:
+        bmesh.update_edit_mesh(bm.data)
+    else:
+        bm.to_mesh(object.data)
+        bm.data.update()
+
+    ### Finish input cleanup.
+
     hull_center, hc, hx, hy, hz = bary_center(object.data.vertices)
     bpy.context.scene.cursor.location = hull_center
 
@@ -249,14 +267,6 @@ def convex_hull(hull_name, object):
         vertices.append(vert.co - hull_center)
 
     hull = create_base_hull(hull_name + "_hull", hull_center, vertices)
-
-    if object.data.is_editmode:
-        bm = bmesh.from_edit_mesh(object.data)
-    else:
-        bm = bmesh.new()
-        bm.from_mesh(object.data)
-
-    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.01)
 
     existing_hull_center, ehcc, ehcx, ehcy, ehcz = bary_center(hull.data.vertices)
 
