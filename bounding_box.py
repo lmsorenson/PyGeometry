@@ -438,6 +438,12 @@ def minimal_bounding_box(polyhedron):
                     bpy.data.objects.remove(to_delete, do_unlink=True)
                 sph = gaussian_sphere(sphere_name, polyhedron)
 
+                if sph is not None:
+                    print("Sphere Created...")
+                else:
+                    print("Sphere Not Created")
+                    continue
+
                 b, box = compute_minima(polyhedron.name, sph, origin, e1, e2, hull.verts, min_vol)
                 if box is not None:
                     min_box = box
