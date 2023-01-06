@@ -6,6 +6,7 @@ def mu(c, c1, c2):
     e1 = c1 - c
     e2 = c2 - c
 
+
     m = e1 - (e1.dot(e2) * e2 / e2.dot(e2))
     d = m.dot(e1)
 
@@ -26,7 +27,7 @@ def bary_centric_coordinates(a, b, c, u):
 
     except Exception as e:
         print (e)
-        return None, None, None
+        raise Exception("cannot continue.")
 
     if mu_a is None or mu_b is None or mu_g is None:
         return -1, -1, -1
